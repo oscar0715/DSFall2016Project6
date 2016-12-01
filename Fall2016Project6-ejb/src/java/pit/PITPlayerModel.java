@@ -144,7 +144,8 @@ public class PITPlayerModel {
         mystate.put("Player", myPlayerNumber);
         return mystate;
     }
-
+    
+    // a help method 
     private void addCard(HashMap<String, Integer> map, String card) {
         if (map.containsKey(card)) {
             map.put(card, 1 + map.get(card));
@@ -154,11 +155,15 @@ public class PITPlayerModel {
     }
 
     private void doEndChannel(Marker marker) throws Exception {
+        // if we have received marker before 
+        
         int source = marker.source;
-
         incoming.put(source, true);
 
+        // check if this node complete this algorithm
         if (checkTermination()) {
+            // if all completed 
+            // send the state to the snapshot queue
             String sendToJNDI = "jms/PITsnapshot";
             System.out.println("[Report state] = player " + myPlayerNumber);
             // System.out.println("[incoming] = " + incoming);
@@ -168,6 +173,7 @@ public class PITPlayerModel {
     }
 
     private boolean checkTermination() {
+        // check if we have received markers form all of the channels 
         Set<Integer> keys = incoming.keySet();
         for (Integer key : keys) {
             if (!incoming.get(key)) {
