@@ -1,0 +1,67 @@
+*.log
+
+*/target
+
+*/classes
+*/lib
+
+**/classes
+**.lib
+
+
+*.prefs
+
+
+*.class
+bin
+
+
+*.component
+
+org.eclipse.wst.common.project.facet.core.xml
+*.jsdtscope
+
+org.eclipse.wst.jsdt.ui.superType.container
+
+org.eclipse.wst.jsdt.ui.superType.name
+*.launch
+
+
+target
+
+.metadata/
+
+*.project
+.classpath
+*.classpath
+*.MF
+*.DS_Store
+
+*.jar
+
+*.iml
+
+
+# Netbeasn
+
+#ant specific
+dist/
+build/
+
+#netbeans specific
+core
+nbproject/*
+!nbproject/project.properties
+!nbproject/project.xml
+
+#java specific
+*.class
+
+#general swap/backup files
+*.so
+*.log
+*.out
+*~
+*.swp
+*.DS_Store
+*.lock
