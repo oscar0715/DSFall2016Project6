@@ -112,6 +112,7 @@ public class PITPlayerModel {
             incoming.put(source, true);
         }
 
+//        System.out.println("[numPlayers] = " + numPlayers);
         Marker newMarker = new Marker(myPlayerNumber);
         for (int i = 0; i < numPlayers; i++) {
             if (i != myPlayerNumber) {
@@ -127,7 +128,7 @@ public class PITPlayerModel {
 
     private HashMap<String, Integer> recordMyState() {
 
-        // create a map
+        // create a map to store the number of cards 
         HashMap<String, Integer> mystate = new HashMap<>();
 
         // count the number of cards I have
@@ -144,7 +145,7 @@ public class PITPlayerModel {
         mystate.put("Player", myPlayerNumber);
         return mystate;
     }
-    
+
     // a help method 
     private void addCard(HashMap<String, Integer> map, String card) {
         if (map.containsKey(card)) {
@@ -155,8 +156,7 @@ public class PITPlayerModel {
     }
 
     private void doEndChannel(Marker marker) throws Exception {
-        // if we have received marker before 
-        
+
         int source = marker.source;
         incoming.put(source, true);
 
@@ -165,7 +165,7 @@ public class PITPlayerModel {
             // if all completed 
             // send the state to the snapshot queue
             String sendToJNDI = "jms/PITsnapshot";
-            System.out.println("[Report state] = player " + myPlayerNumber);
+//            System.out.println("[Report state] = player " + myPlayerNumber);
             // System.out.println("[incoming] = " + incoming);
             sendToQueue(sendToJNDI, state);
             resetSnapshot();
@@ -173,8 +173,10 @@ public class PITPlayerModel {
     }
 
     private boolean checkTermination() {
+
         // check if we have received markers form all of the channels 
         Set<Integer> keys = incoming.keySet();
+
         for (Integer key : keys) {
             if (!incoming.get(key)) {
                 return false;
@@ -226,27 +228,31 @@ public class PITPlayerModel {
     }
 
     private void doReceiveTrade(Trade trade) throws Exception {
-        if (halting) {
-            return; // if halting, discard trade
-        }
-        // Having received a Trade card from another Player, add it to my hand of cards
-        cards.add(trade.tradeCard);
-        
-        String card = trade.tradeCard;
-        // get the source 
-        int source = trade.sourcePlayer;
-        if (isStarted && !incoming.get(source + "")) {
-            // if the algorithm is stated 
-            // and we have not received a Marker from this channel
-            // we should count this trade 
-            addCard(state, card);
-        }
-        
 
-        System.out.println("PITplayer" + myPlayerNumber + " received: " + trade.tradeCard + " from player: " + trade.sourcePlayer);
-        System.out.println("PITplayer" + myPlayerNumber + " hand: " + toString(cards));
-        // Trade away a card
-        doMakeTrade();
+
+            if (halting) {
+                return; // if halting, discard trade
+            }
+            // Having received a Trade card from another Player, add it to my hand of cards
+            cards.add(trade.tradeCard);
+
+            String card = trade.tradeCard;
+            // get the source 
+            int source = trade.sourcePlayer;
+            if (isStarted && !incoming.get(source)) {
+                // if the algorithm is stated 
+                // and we have not received a Marker from this channel
+                // we should count this trade 
+                addCard(state, card);
+            }
+
+  
+            System.out.println("PITplayer" + myPlayerNumber + " received: " + trade.tradeCard + " from player: " + trade.sourcePlayer);
+            System.out.println("PITplayer" + myPlayerNumber + " hand: " + toString(cards));
+
+            // Trade away a card
+            doMakeTrade();
+        
     }
 
     private void doMakeTrade() throws Exception {
@@ -281,6 +287,7 @@ public class PITPlayerModel {
         System.out.println("PITplayer" + myPlayerNumber + " sending: " + newTrade.tradeCard + " to player: " + sendTo);
         String sendToJNDI = "jms/PITplayer" + sendTo;
         sendToQueue(sendToJNDI, newTrade);
+//        System.out.println("[Trade count] = " + numTrades);
 
     }
 
